@@ -331,7 +331,7 @@ public class Business {
     }
 
     @Transactional
-    public void multyAssign(AssignmentData assignmentData,
+    public void multyAssign(@org.jetbrains.annotations.NotNull AssignmentData assignmentData,
                             LedgerRec refLedgerRec) throws Exception {
         BigDecimal v  = assignmentData.getAmount();
         String description = assignmentData.getDescription();
@@ -371,8 +371,8 @@ public class Business {
                 throw new Exception("Badd acc credit "+ar.getCredit());
             }
 
-            Account accDebit = accountsRep.findById(ar.getDebit()).get(); //TODO
-            Account accCredit = accountsRep.findById(ar.getCredit()).get();
+            Account accDebit = accountsRep.findById(ar.getDebit()).orElseThrow();
+            Account accCredit = accountsRep.findById(ar.getCredit()).orElseThrow();
             BigDecimal value  = ar.getValue();
             LedgerRecDetail ledgerRecDetail = new LedgerRecDetail(accDebit,
                                                                   accCredit,
