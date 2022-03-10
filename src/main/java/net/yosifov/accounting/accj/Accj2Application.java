@@ -1,4 +1,4 @@
-package net.yosifov.accounting.accj.accj;
+package net.yosifov.accounting.accj;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
