@@ -352,16 +352,11 @@ public class Business {
             throw new Exception("The transaction's ampount must not be Zero");
         }
 
-        BigDecimal ad = BigDecimal.ZERO;
-        BigDecimal ac = BigDecimal.ZERO;
+        BigDecimal currVal = BigDecimal.ZERO;
         for(AssgnRecord ar: lstAssgn) {
-            ad = ad.add(ar.getValue());
-            ac = ac.add(ar.getValue());
+            currVal = currVal.add(ar.getValue());
         }
-        if(ad.compareTo(v)!=0) {
-            throw new Exception("Bad assignment values");
-        }
-        if(ac.compareTo(v)!=0) {
+        if(currVal.compareTo(v)!=0) {
             throw new Exception("Bad assignment values");
         }
 
@@ -375,7 +370,8 @@ public class Business {
             if(!checkAccount(ar.getCredit())) {
                 throw new Exception("Badd acc credit "+ar.getCredit());
             }
-            Account accDebit = accountsRep.findById(ar.getDebit()).get();
+
+            Account accDebit = accountsRep.findById(ar.getDebit()).get(); //TODO
             Account accCredit = accountsRep.findById(ar.getCredit()).get();
             BigDecimal value  = ar.getValue();
             LedgerRecDetail ledgerRecDetail = new LedgerRecDetail(accDebit,
