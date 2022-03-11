@@ -2,6 +2,7 @@ package net.yosifov.accounting.accj.controllers;
 
 import net.yosifov.accounting.accj.utils.AssignmentData;
 import net.yosifov.accounting.accj.utils.Business;
+import net.yosifov.accounting.accj.utils.ReverseAssignRec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,12 @@ public class AssignmentController {
     public void assign(@RequestBody AssignmentData assignmentData) throws Exception {
         System.out.println(assignmentData);
         business.multyAssign(assignmentData, null);
+    }
+
+    @PostMapping("/jpa/v1/reverse")
+    public void reverseAssign(@RequestBody ReverseAssignRec reverseAssignRec) {
+        System.out.println(reverseAssignRec);
+        business.reverseAssign(reverseAssignRec);
     }
 }
 

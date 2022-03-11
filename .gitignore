@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-accj.log
+accj.log*

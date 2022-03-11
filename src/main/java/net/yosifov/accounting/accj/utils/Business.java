@@ -2,13 +2,13 @@ package net.yosifov.accounting.accj.utils;
 
 import net.yosifov.accounting.accj.entities.*;
 import net.yosifov.accounting.accj.repositories.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -85,24 +85,6 @@ public class Business {
 
     }
 
-    @Transactional
-    public void assignTest() throws Exception {
-        Account a503;
-        Account a50301 = findAccByName("50301");
-        Account a111 = findAccByName("111");
-
-        // TODO To add user
-        assign(a50301,a111,BigDecimal.valueOf(1000),"First Record",null);
-//        try {
-//            a503 = findAccById(157L);
-//            assign(a503,a111,BigDecimal.valueOf(1000),company,"Record to fail",null);
-//        }
-//        catch (Exception e) {
-//            logger.error(e.getMessage());
-//        }
-
-        assign(a50301,a111,BigDecimal.valueOf(1000),"Second Record",null);
-    }
 
     @Transactional
     private Account findAccById(String l) {
@@ -263,75 +245,7 @@ public class Business {
     }
 
     @Transactional
-    public void reverseTest() throws Exception {
-        Optional<LedgerRecDetail> optLedgerRecDetail = ledgerRecDetailRep.findById(258L);
-        LedgerRecDetail ledgerRecDetail;
-        if(optLedgerRecDetail.isPresent()) {
-            ledgerRecDetail = optLedgerRecDetail.get();
-        }
-        else {
-            throw new Exception("ledgerRecDetail not found");
-        }
-        reverseAssign("Reverse Record 2", ledgerRecDetail);
-    }
-    @Transactional
-    public void reverseAssign(String description,
-                              LedgerRecDetail refLedgerRecDetail) throws Exception {
-        BigDecimal v = refLedgerRecDetail
-                        .getAmount()
-                        .multiply(BigDecimal.valueOf(-1L));
-        Account accDebit = refLedgerRecDetail.getAccDeb();
-        Account accCredit= refLedgerRecDetail.getAccCredit();
-        LedgerRec refLedgerRec = refLedgerRecDetail.getLedgerRec();
-
-        assign(accDebit,
-               accCredit,
-               v,
-               description,
-               refLedgerRec);
-    }
-
-    @Transactional
-    public void assign(Account accDebit,
-                       Account accCredit,
-                       @NotNull BigDecimal v,
-                       String description,
-                       LedgerRec refLedgerRec) throws Exception {
-        if(v.compareTo(BigDecimal.ZERO)>0) {
-            if(refLedgerRec != null) {
-                throw new Exception("Argument refLedgerRec shoud be not null on reverse transactions only");
-            }
-        }
-        else
-        if(v.compareTo(BigDecimal.ZERO)< 0) {
-            if(refLedgerRec == null) {
-                throw new Exception("Argument refLedgerRec shoud be not null on reverse transactions");
-            }
-        }
-        else
-        if(v.compareTo(BigDecimal.ZERO)==0){
-            throw new Exception("The transaction's ampount must not be Zero");
-        }
-        if(accDebit.getChildrenAccounts().size() > 0) {
-            throw new Exception("The Account to debit must not have children");
-        }
-        if(accCredit.getChildrenAccounts().size() > 0) {
-            throw new Exception("The Account to credit must not have children");
-        }
-
-        LedgerRec ledgerRec = addLedgerRec(v,
-                                 description,
-                                 refLedgerRec);
-        LedgerRecDetail ledgerRecDetail = new LedgerRecDetail(accDebit,
-                                                              accCredit,
-                                                              v,
-                ledgerRec);
-        ledgerRecDetailRep.save(ledgerRecDetail);
-        assignUp(accDebit,accCredit,v, ledgerRecDetail);
-    }
-
-    @Transactional
-    public void multyAssign(@org.jetbrains.annotations.NotNull AssignmentData assignmentData,
+    public void multyAssign(@NotNull AssignmentData assignmentData,
                             LedgerRec refLedgerRec) throws Exception {
         BigDecimal v  = assignmentData.getAmount();
         String description = assignmentData.getDescription();
@@ -393,5 +307,30 @@ public class Business {
             return false;
         }
         return true;
+    }
+
+    @Transactional
+    public void reverseAssign(ReverseAssignRec reverseAssignRec) {
+        String description = reverseAssignRec.getDescription();
+        Long ledgerRecId = reverseAssignRec.getLedgerRecId();
+        LedgerRec refLedgerRec = ledgerRecRep.findById(ledgerRecId).orElseThrow();
+
+        LedgerRec ledgerRec = new LedgerRec();
+        BigDecimal amount = refLedgerRec.getAmount().multiply(BigDecimal.valueOf(-1));
+        ledgerRec.setAmount(amount);
+        ledgerRec.setDescription("Сторно "+description);
+        ledgerRec.setRefLedgerRec(refLedgerRec);
+        ledgerRecRep.save(ledgerRec);
+
+        List<LedgerRecDetail> lstLedgerRecDetail = refLedgerRec.getLstLedgerRecDetail();
+        for(LedgerRecDetail ledgerRecDetail: lstLedgerRecDetail) {
+            Account accDebit  = ledgerRecDetail.getAccDeb();
+            Account accCredit = ledgerRecDetail.getAccCredit();
+            BigDecimal value  = ledgerRecDetail.getAmount().multiply(BigDecimal.valueOf(-1));
+
+            LedgerRecDetail lrd = new LedgerRecDetail(accDebit, accCredit, value, ledgerRec);
+            ledgerRecDetailRep.save(lrd);
+            assignUp(accDebit,accCredit,value, lrd);
+        }
     }
 }
