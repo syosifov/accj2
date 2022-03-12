@@ -224,14 +224,14 @@ public class Business {
 
         switch (op) {
             case Debit, ReverseDebit -> {
-                account.debit(v);
+                account.debit(v, BigDecimal.ZERO); //TODO
                 accountHistory.setEndBalance(account.getBalance());
                 accountHistory.setEndAssets(account.getAssets());
                 accountHistory.setEndLiabilities(account.getLiabilities());
                 accountHistory.setDebit(v);
             }
             case Credit, ReverseCredit -> {
-                account.credit(v);
+                account.credit(v, BigDecimal.ZERO); //TODO
                 accountHistory.setEndBalance(account.getBalance());
                 accountHistory.setEndAssets(account.getAssets());
                 accountHistory.setEndLiabilities(account.getLiabilities());
@@ -285,7 +285,7 @@ public class Business {
                 throw new Exception("Badd acc credit "+ar.getCredit());
             }
 
-            Account accDebit = accountsRep.findById(ar.getDebit()).orElseThrow();
+            Account accDebit = accountsRep.findById(ar.getDebit()).orElseThrow(); //TODO
             Account accCredit = accountsRep.findById(ar.getCredit()).orElseThrow();
             BigDecimal value  = ar.getValue();
             LedgerRecDetail ledgerRecDetail = new LedgerRecDetail(accDebit,
