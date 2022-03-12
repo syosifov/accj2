@@ -18,16 +18,20 @@ public class Account {
     private String id;
 
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal assets;
+    private BigDecimal assets = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal am = BigDecimal.ZERO;
+
 
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal liabilities;
+    private BigDecimal liabilities = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal lm = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal bm = BigDecimal.ZERO;
 
     @Column
     @NotNull
@@ -35,11 +39,10 @@ public class Account {
 
     @Column
     @NotNull
-    private AT at;
+    private AT at = AT.A;
 
     @Column
-    @NotNull
-    private String description;
+    private String description = "";
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,27 +52,27 @@ public class Account {
     private List<Account> childrenAccounts;
 
     public Account() {
-        this.assets = new BigDecimal("0.00");
-        this.liabilities = new BigDecimal("0.00");
-        this.balance = new BigDecimal("0.00");
-        this.at = AT.A;
-        this.description = "";
     }
 
     public Account(String id,
                    BigDecimal assets,
+                   BigDecimal am,
                    BigDecimal liabilities,
+                   BigDecimal lm,
                    BigDecimal balance,
+                   BigDecimal bm,
                    LocalDate lastModified,
                    AT at,
                    String description,
                    Account parentAccount,
                    List<Account> childrenAccounts) {
-        this();
         this.id = id;
         this.assets = assets;
+        this.am = am;
         this.liabilities = liabilities;
+        this.lm = lm;
         this.balance = balance;
+        this.bm = bm;
         this.lastModified = lastModified;
         this.at = at;
         this.description = description;
@@ -151,21 +154,58 @@ public class Account {
 
     protected void recap() {
         switch (at) {
-            case A -> balance = assets.subtract(liabilities);
-            case L -> balance = liabilities.subtract(assets);
-            default -> balance = assets.subtract(liabilities);
+            case A -> {
+                balance = assets.subtract(liabilities);
+                bm = am.subtract(lm);
+            }
+            case L -> {
+                balance = liabilities.subtract(assets);
+                bm = lm.subtract(am);
+            }
+            default -> {
+                balance = assets.subtract(liabilities);
+                bm = am.subtract(lm);
+            }
         }
 
     }
 
-    public void debit(BigDecimal v){
+    public void debit(BigDecimal v,
+                      BigDecimal m) {
         assets = assets.add(v);
+        am = am.add(m);
         recap();
     }
 
-    public void credit(BigDecimal v){
+    public void credit(BigDecimal v,
+                       BigDecimal m) {
         liabilities = liabilities.add(v);
+        lm = lm.add(m);
         recap();
+    }
+
+    public BigDecimal getAm() {
+        return am;
+    }
+
+    public void setAm(BigDecimal am) {
+        this.am = am;
+    }
+
+    public BigDecimal getLm() {
+        return lm;
+    }
+
+    public void setLm(BigDecimal lm) {
+        this.lm = lm;
+    }
+
+    public BigDecimal getBm() {
+        return bm;
+    }
+
+    public void setBm(BigDecimal bm) {
+        this.bm = bm;
     }
 
     @Override
@@ -173,8 +213,11 @@ public class Account {
         return "Account {" +
                 "id='" + id + '\'' +
                 ", assets=" + assets +
+                ", am=" + am +
                 ", liabilities=" + liabilities +
+                ", lm=" + lm +
                 ", balance=" + balance +
+                ", bm=" + bm +
                 ", lastModified=" + lastModified +
                 ", at=" + at +
                 ", description='" + description + '\'' +
