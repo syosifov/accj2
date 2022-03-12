@@ -19,20 +19,28 @@ public class AccountHistory {
 
     @Column(precision = 19, scale = C.SCALE)
     private BigDecimal initialAssets = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal initialAmDeb = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = C.SCALE)
     private BigDecimal initialLiabilities = BigDecimal.ZERO;
     @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal initialAmCr = BigDecimal.ZERO;
+
+    @Column(precision = 19, scale = C.SCALE)
     private BigDecimal initialBalance = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal initialAmB = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = C.SCALE)
     private BigDecimal debit = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal ad = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = C.SCALE)
     private BigDecimal credit = BigDecimal.ZERO;
-
     @Column(precision = 19, scale = C.SCALE)
-    private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal ac = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = C.SCALE)
     private BigDecimal endAssets = BigDecimal.ZERO;
@@ -52,36 +60,21 @@ public class AccountHistory {
     @NotNull
     private Account corrAccount;
 
-    public AccountHistory() {}
-
-    public AccountHistory(Account account,
-                          @NotNull BigDecimal initialAssets,
-                          @NotNull BigDecimal initialLiabilities,
-                          @NotNull BigDecimal initialBalance,
-                          @NotNull BigDecimal endAssets,
-                          @NotNull BigDecimal endLiabilities,
-                          @NotNull BigDecimal endBalance,
-                          @NotNull LedgerRecDetail ledgerRecDetail,
-                          @NotNull Op op) {
-        this.account = account;
-        this.initialAssets = initialAssets;
-        this.initialLiabilities = initialLiabilities;
-        this.initialBalance = initialBalance;
-        this.endAssets = endAssets;
-        this.endLiabilities = endLiabilities;
-        this.endBalance = endBalance;
-        this.ledgerRecDetail = ledgerRecDetail;
-        this.op = op;
+    public AccountHistory() {
     }
 
     public AccountHistory(Long id,
                           Account account,
                           BigDecimal initialAssets,
+                          BigDecimal initialAmDeb,
                           BigDecimal initialLiabilities,
+                          BigDecimal initialAmCr,
                           BigDecimal initialBalance,
+                          BigDecimal initialAmB,
                           BigDecimal debit,
+                          BigDecimal ad,
                           BigDecimal credit,
-                          BigDecimal amount,
+                          BigDecimal ac,
                           BigDecimal endAssets,
                           BigDecimal endLiabilities,
                           BigDecimal endBalance,
@@ -91,11 +84,15 @@ public class AccountHistory {
         this.id = id;
         this.account = account;
         this.initialAssets = initialAssets;
+        this.initialAmDeb = initialAmDeb;
         this.initialLiabilities = initialLiabilities;
+        this.initialAmCr = initialAmCr;
         this.initialBalance = initialBalance;
+        this.initialAmB = initialAmB;
         this.debit = debit;
+        this.ad = ad;
         this.credit = credit;
-        this.amount = amount;
+        this.ac = ac;
         this.endAssets = endAssets;
         this.endLiabilities = endLiabilities;
         this.endBalance = endBalance;
@@ -128,6 +125,14 @@ public class AccountHistory {
         this.initialAssets = initialAssets;
     }
 
+    public BigDecimal getInitialAmDeb() {
+        return initialAmDeb;
+    }
+
+    public void setInitialAmDeb(BigDecimal initialAmDeb) {
+        this.initialAmDeb = initialAmDeb;
+    }
+
     public BigDecimal getInitialLiabilities() {
         return initialLiabilities;
     }
@@ -136,12 +141,60 @@ public class AccountHistory {
         this.initialLiabilities = initialLiabilities;
     }
 
+    public BigDecimal getInitialAmCr() {
+        return initialAmCr;
+    }
+
+    public void setInitialAmCr(BigDecimal initialAmCr) {
+        this.initialAmCr = initialAmCr;
+    }
+
     public BigDecimal getInitialBalance() {
         return initialBalance;
     }
 
     public void setInitialBalance(BigDecimal initialBalance) {
         this.initialBalance = initialBalance;
+    }
+
+    public BigDecimal getInitialAmB() {
+        return initialAmB;
+    }
+
+    public void setInitialAmB(BigDecimal initialAmB) {
+        this.initialAmB = initialAmB;
+    }
+
+    public BigDecimal getDebit() {
+        return debit;
+    }
+
+    public void setDebit(BigDecimal debit) {
+        this.debit = debit;
+    }
+
+    public BigDecimal getAd() {
+        return ad;
+    }
+
+    public void setAd(BigDecimal ad) {
+        this.ad = ad;
+    }
+
+    public BigDecimal getCredit() {
+        return credit;
+    }
+
+    public void setCredit(BigDecimal credit) {
+        this.credit = credit;
+    }
+
+    public BigDecimal getAc() {
+        return ac;
+    }
+
+    public void setAc(BigDecimal ac) {
+        this.ac = ac;
     }
 
     public BigDecimal getEndAssets() {
@@ -184,30 +237,6 @@ public class AccountHistory {
         this.op = op;
     }
 
-    public BigDecimal getDebit() {
-        return debit;
-    }
-
-    public void setDebit(BigDecimal debit) {
-        this.debit = debit;
-    }
-
-    public BigDecimal getCredit() {
-        return credit;
-    }
-
-    public void setCredit(BigDecimal credit) {
-        this.credit = credit;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
     public Account getCorrAccount() {
         return corrAccount;
     }
@@ -216,18 +245,28 @@ public class AccountHistory {
         this.corrAccount = corrAccount;
     }
 
+
     @Override
     public String toString() {
-        return "AccountHistory{" +
+        return "AccountHistory {" +
                 "id=" + id +
                 ", account=" + account +
                 ", initialAssets=" + initialAssets +
+                ", initialAmDeb=" + initialAmDeb +
                 ", initialLiabilities=" + initialLiabilities +
+                ", initialAmCr=" + initialAmCr +
                 ", initialBalance=" + initialBalance +
-                ", endDebit=" + endAssets +
+                ", initialAmB=" + initialAmB +
+                ", debit=" + debit +
+                ", ad=" + ad +
+                ", credit=" + credit +
+                ", ac=" + ac +
+                ", endAssets=" + endAssets +
                 ", endLiabilities=" + endLiabilities +
                 ", endBalance=" + endBalance +
                 ", ledgerRecDetail=" + ledgerRecDetail +
+                ", op=" + op +
+                ", corrAccount=" + corrAccount +
                 '}';
     }
 }
