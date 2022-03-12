@@ -18,34 +18,28 @@ public class AccountHistory {
     private Account account;
 
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal initialAssets;
+    private BigDecimal initialAssets = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal initialLiabilities;
+    private BigDecimal initialLiabilities = BigDecimal.ZERO;
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal initialBalance;
-
-    @Column(precision = 19, scale = C.SCALE, columnDefinition="decimal(19,2) default 0.00")
-    private BigDecimal debit;
-
-    @Column(precision = 19, scale = C.SCALE, columnDefinition="decimal(19,2) default 0.00")
-    private BigDecimal credit;
-
-    @Column(precision = 19, scale = C.SCALE, columnDefinition="decimal(19,2) default 0.00")
-    private BigDecimal amount;
+    private BigDecimal initialBalance = BigDecimal.ZERO;
 
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal endAssets;
+    private BigDecimal debit = BigDecimal.ZERO;
+
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal endLiabilities;
+    private BigDecimal credit = BigDecimal.ZERO;
+
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    private BigDecimal endBalance;
+    private BigDecimal amount = BigDecimal.ZERO;
+
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal endAssets = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal endLiabilities = BigDecimal.ZERO;
+    @Column(precision = 19, scale = C.SCALE)
+    private BigDecimal endBalance = BigDecimal.ZERO;
 
     @OneToOne
     @NotNull
