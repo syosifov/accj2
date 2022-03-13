@@ -194,22 +194,24 @@ public class Business {
     public void assignUp(Account accDebit,
                          Account accCredit,
                          BigDecimal v,
+                         BigDecimal vm,
                          LedgerRecDetail ledgerRecDetail) {
         Account account = accDebit;
         while (null != account) {
-            registerOp(account, v, Op.Debit, ledgerRecDetail, accCredit);
+            registerOp(account, v, vm, Op.Debit, ledgerRecDetail, accCredit);
             account = account.getParentAccount();
         }
 
         account = accCredit;
         while (null != account) {
-            registerOp(account, v, Op.Credit, ledgerRecDetail, accDebit);
+            registerOp(account, v, vm, Op.Credit, ledgerRecDetail, accDebit);
             account = account.getParentAccount();
         }
     }
 
     private void registerOp(Account account,
                             BigDecimal v,
+                            BigDecimal vm,
                             Op op,
                             LedgerRecDetail ledgerRecDetail,
                             Account corrAccount) {
@@ -224,14 +226,14 @@ public class Business {
 
         switch (op) {
             case Debit, ReverseDebit -> {
-                account.debit(v, BigDecimal.ZERO); //TODO
+                account.debit(v, vm);
                 accountHistory.setEndBalance(account.getBalance());
                 accountHistory.setEndAssets(account.getAssets());
                 accountHistory.setEndLiabilities(account.getLiabilities());
                 accountHistory.setDebit(v);
             }
             case Credit, ReverseCredit -> {
-                account.credit(v, BigDecimal.ZERO); //TODO
+                account.credit(v, vm);
                 accountHistory.setEndBalance(account.getBalance());
                 accountHistory.setEndAssets(account.getAssets());
                 accountHistory.setEndLiabilities(account.getLiabilities());
@@ -288,12 +290,15 @@ public class Business {
             Account accDebit = accountsRep.findById(ar.getDebit()).orElseThrow(); //TODO
             Account accCredit = accountsRep.findById(ar.getCredit()).orElseThrow();
             BigDecimal value  = ar.getValue();
+            // BigDecimal vm = ar.getVm();
+            BigDecimal vm = Optional.ofNullable(ar.getVm()).orElse(BigDecimal.ZERO);
             LedgerRecDetail ledgerRecDetail = new LedgerRecDetail(accDebit,
                                                                   accCredit,
                                                                   value,
+                                                                  vm,
                                                                   ledgerRec);
             ledgerRecDetailRep.save(ledgerRecDetail);
-            assignUp(accDebit,accCredit,value, ledgerRecDetail);
+            assignUp(accDebit,accCredit,value, vm, ledgerRecDetail);
         }
 
     }
@@ -327,10 +332,12 @@ public class Business {
             Account accDebit  = ledgerRecDetail.getAccDeb();
             Account accCredit = ledgerRecDetail.getAccCredit();
             BigDecimal value  = ledgerRecDetail.getAmount().multiply(BigDecimal.valueOf(-1));
+            BigDecimal vm = Optional.of(ledgerRecDetail.getVm()).orElse(BigDecimal.ZERO);
+            vm = vm.multiply(BigDecimal.valueOf(-1));
 
-            LedgerRecDetail lrd = new LedgerRecDetail(accDebit, accCredit, value, ledgerRec);
+            LedgerRecDetail lrd = new LedgerRecDetail(accDebit, accCredit, value, vm, ledgerRec);
             ledgerRecDetailRep.save(lrd);
-            assignUp(accDebit,accCredit,value, lrd);
+            assignUp(accDebit,accCredit,value, vm, lrd);
         }
     }
 }

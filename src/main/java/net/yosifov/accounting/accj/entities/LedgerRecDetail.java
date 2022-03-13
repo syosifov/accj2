@@ -20,8 +20,10 @@ public class LedgerRecDetail {
     Account accCredit;
 
     @Column(precision = 19, scale = C.SCALE)
-    @NotNull
-    BigDecimal amount;
+    BigDecimal amount = BigDecimal.ZERO;
+
+    @Column(precision = 19, scale = C.SCALE)
+    BigDecimal vm = BigDecimal.ZERO;
 
     @ManyToOne
     @NotNull
@@ -33,10 +35,12 @@ public class LedgerRecDetail {
     public LedgerRecDetail(Account accDeb,
                            Account accCredit,
                            @NotNull BigDecimal amount,
+                           @NotNull BigDecimal vm,
                            @NotNull LedgerRec ledgerRec) {
         this.accDeb = accDeb;
         this.accCredit = accCredit;
         this.amount = amount;
+        this.vm = vm;
         this.ledgerRec = ledgerRec;
     }
 
@@ -80,13 +84,22 @@ public class LedgerRecDetail {
         this.ledgerRec = ledgerRec;
     }
 
+    public BigDecimal getVm() {
+        return vm;
+    }
+
+    public void setVm(BigDecimal vm) {
+        this.vm = vm;
+    }
+
     @Override
     public String toString() {
-        return "LedgerRecDetail{" +
+        return "LedgerRecDetail {" +
                 "id=" + id +
                 ", accDeb=" + accDeb +
                 ", accCredit=" + accCredit +
                 ", amount=" + amount +
+                ", vm=" + vm +
                 ", ledgerRec=" + ledgerRec +
                 '}';
     }

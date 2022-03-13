@@ -6,23 +6,13 @@ public class AssgnRecord {
     String debit;
     String credit;
     BigDecimal value;
-    BigDecimal ad;
-    BigDecimal ac;
+    BigDecimal vm;
+
 
     public AssgnRecord() {
     }
 
-    public AssgnRecord(String debit,
-                       String credit,
-                       BigDecimal value,
-                       BigDecimal ad,
-                       BigDecimal ac) {
-        this.debit = debit;
-        this.credit = credit;
-        this.value = value;
-        this.ad = ad;
-        this.ac = ac;
-    }
+
 
     public String getDebit() {
         return debit;
@@ -48,20 +38,12 @@ public class AssgnRecord {
         this.value = value;
     }
 
-    public BigDecimal getAd() {
-        return ad;
+    public BigDecimal getVm() {
+        return vm;
     }
 
-    public void setAd(BigDecimal ad) {
-        this.ad = ad;
-    }
-
-    public BigDecimal getAc() {
-        return ac;
-    }
-
-    public void setAc(BigDecimal ac) {
-        this.ac = ac;
+    public void setVm(BigDecimal vm) {
+        this.vm = vm;
     }
 
     @Override
@@ -70,8 +52,7 @@ public class AssgnRecord {
                 "debit='" + debit + '\'' +
                 ", credit='" + credit + '\'' +
                 ", value=" + value +
-                ", ad=" + ad +
-                ", ac=" + ac +
+                ", vm=" + vm +
                 '}';
     }
 }
