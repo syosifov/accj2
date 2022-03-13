@@ -208,21 +208,21 @@ public class Account {
         this.bm = bm;
     }
 
-    @Override
-    public String toString() {
-        return "Account {" +
-                "id='" + id + '\'' +
-                ", assets=" + assets +
-                ", am=" + am +
-                ", liabilities=" + liabilities +
-                ", lm=" + lm +
-                ", balance=" + balance +
-                ", bm=" + bm +
-                ", lastModified=" + lastModified +
-                ", at=" + at +
-                ", description='" + description + '\'' +
-                ", parentAccount=" + parentAccount +
-                ", childrenAccounts=" + childrenAccounts +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Account {" +
+//                "id='" + id + '\'' +
+//                ", assets=" + assets +
+//                ", am=" + am +
+//                ", liabilities=" + liabilities +
+//                ", lm=" + lm +
+//                ", balance=" + balance +
+//                ", bm=" + bm +
+//                ", lastModified=" + lastModified +
+//                ", at=" + at +
+//                ", description='" + description + '\'' +
+//                ", parentAccount=" + parentAccount +
+//                ", childrenAccounts=" + childrenAccounts +
+//                '}';
+//    }
 }
