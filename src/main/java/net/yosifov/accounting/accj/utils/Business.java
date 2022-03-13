@@ -290,7 +290,6 @@ public class Business {
             Account accDebit = accountsRep.findById(ar.getDebit()).orElseThrow(); //TODO
             Account accCredit = accountsRep.findById(ar.getCredit()).orElseThrow();
             BigDecimal value  = ar.getValue();
-            // BigDecimal vm = ar.getVm();
             BigDecimal vm = Optional.ofNullable(ar.getVm()).orElse(BigDecimal.ZERO);
             LedgerRecDetail ledgerRecDetail = new LedgerRecDetail(accDebit,
                                                                   accCredit,
@@ -320,11 +319,14 @@ public class Business {
         Long ledgerRecId = reverseAssignRec.getLedgerRecId();
         LedgerRec refLedgerRec = ledgerRecRep.findById(ledgerRecId).orElseThrow();
 
-        LedgerRec ledgerRec = new LedgerRec();
         BigDecimal amount = refLedgerRec.getAmount().multiply(BigDecimal.valueOf(-1));
-        ledgerRec.setAmount(amount);
-        ledgerRec.setDescription("Сторно "+description);
-        ledgerRec.setRefLedgerRec(refLedgerRec);
+
+        LedgerRec ledgerRec = addLedgerRec(amount,
+                                 "***Сторно*** "+refLedgerRec.getDescription()+" * "+description,
+                                           refLedgerRec);
+        ledgerRecRep.save(ledgerRec);
+        refLedgerRec.setRefLedgerRec(ledgerRec);
+        refLedgerRec.setDescription(refLedgerRec.getDescription()+" ***сторниран***");
         ledgerRecRep.save(ledgerRec);
 
         List<LedgerRecDetail> lstLedgerRecDetail = refLedgerRec.getLstLedgerRecDetail();
