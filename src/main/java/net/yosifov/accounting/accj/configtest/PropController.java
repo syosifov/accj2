@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PropController {
 
     @Value("${limits-service.minimum}")
-    private String min;
+    private int min;
     @Value("${limits-service.maximum}")
-    private String max;
+    private int max;
 
     @GetMapping("/props")
     public Limits props() {
-        Limits limits = new Limits(Integer.valueOf(min),
-                                   Integer.valueOf(max));
+        Limits limits = new Limits(min,max);
         return limits;
     }
 
